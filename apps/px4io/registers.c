@@ -138,7 +138,7 @@ volatile uint16_t	r_page_setup[] =
 	[PX4IO_P_SETUP_PWM_ALTRATE]		= 200,
 	[PX4IO_P_SETUP_RELAYS]			= 0,
 	[PX4IO_P_SETUP_VBATT_SCALE]		= 10000,
-	[PX4IO_P_SETUP_IBATT_SCALE]		= 0,
+	[PX4IO_P_SETUP_IBATT_SCALE]		= 10000,
 	[PX4IO_P_SETUP_IBATT_BIAS]		= 0,
 	[PX4IO_P_SETUP_SET_DEBUG]		= 0,
 };
@@ -356,6 +356,18 @@ registers_set_one(uint8_t page, uint8_t offset, uint16_t value)
 			isr_debug(0, "set debug %u\n", (unsigned)r_page_setup[PX4IO_P_SETUP_SET_DEBUG]);
 			break;
 
+		case PX4IO_P_SETUP_VBATT_SCALE:
+			r_page_setup[PX4IO_P_SETUP_VBATT_SCALE] = value;
+			break;
+
+		case PX4IO_P_SETUP_IBATT_SCALE:
+			r_page_setup[PX4IO_P_SETUP_IBATT_SCALE] = value;
+			break;
+
+		case PX4IO_P_SETUP_IBATT_BIAS:
+			r_page_setup[PX4IO_P_SETUP_IBATT_BIAS] = value;
+			break;
+
 		default:
 			return -1;
 		}
@@ -516,7 +528,9 @@ registers_get(uint8_t page, uint8_t offset, uint16_t **values, unsigned *num_val
 
 		/* PX4IO_P_STATUS_IBATT */
 		{
-			unsigned counts = adc_measure(ADC_VBATT);
+			// is ADC_IN5 the right input for the current
+			// sensing pad?
+			unsigned counts = adc_measure(ADC_IN5);
 			unsigned scaled = (counts * r_page_setup[PX4IO_P_SETUP_IBATT_SCALE]) / 10000;
 			int corrected = scaled + REG_TO_SIGNED(r_page_setup[PX4IO_P_SETUP_IBATT_BIAS]);
 			if (corrected < 0)
