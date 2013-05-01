@@ -50,3 +50,14 @@
 /*
  * ioctl definitions
  */
+#define _ADCIOCBASE		(0x2600)
+#define _ADCIOC(_n)		(_IOC(_ADCIOCBASE, _n))
+
+/** set the voltage scaling on px4io */
+#define ADCIOCSETVBATTSCALING	_ADCIOC(0)
+
+/** set the current scaling on px4io */
+#define ADCIOCSETIBATTSCALING	_ADCIOC(1)
+
+/** set the current bias on px4io */
+#define ADCIOCSETIBATTBIAS	_ADCIOC(2)
