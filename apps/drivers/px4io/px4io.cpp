@@ -64,6 +64,7 @@
 #include <drivers/drv_gpio.h>
 #include <drivers/drv_hrt.h>
 #include <drivers/drv_mixer.h>
+#include <drivers/drv_adc.h>
 
 #include <systemlib/mixer/mixer.h>
 #include <systemlib/perf_counter.h>
@@ -1479,6 +1480,27 @@ PX4IO::ioctl(file *filep, int cmd, unsigned long arg)
 			ret = io_reg_modify(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_ARMING, PX4IO_P_SETUP_ARMING_INAIR_RESTART_OK, 0);
 		}
 		break;
+
+	case ADCIOCSETVBATTSCALING: {
+		/* set the battery voltage scaling */
+		uint16_t scaling = (uint16_t)arg;
+		ret = io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_VBATT_SCALE, &scaling, 1);
+		break;
+	}
+
+	case ADCIOCSETIBATTSCALING: {
+		/* set the battery current scaling */
+		uint16_t scaling = (uint16_t)arg;
+		ret = io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_IBATT_SCALE, &scaling, 1);
+		break;
+	}
+
+	case ADCIOCSETIBATTBIAS: {
+		/* set the battery current bias */
+		uint16_t bias = (uint16_t)arg;
+		ret = io_reg_set(PX4IO_PAGE_SETUP, PX4IO_P_SETUP_IBATT_BIAS, &bias, 1);
+		break;
+	}
 
 	default:
 		/* not a recognized value */
