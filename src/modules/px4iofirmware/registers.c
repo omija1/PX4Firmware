@@ -316,6 +316,14 @@ registers_set_one(uint8_t page, uint8_t offset, uint16_t value)
 				r_status_flags &= ~PX4IO_P_STATUS_FLAGS_ARMED;
 			}
 
+			/*
+			  temporary hack to make px4io compatible with
+			  older ardupilot firmwares
+			 */
+			if (value & PX4IO_P_SETUP_ARMING_FMU_ARMED) {
+				value |= PX4IO_P_SETUP_ARMING_IO_ARM_OK;
+			}
+
 			r_setup_arming = value;
 
 			break;
